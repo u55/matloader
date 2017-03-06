@@ -367,6 +367,13 @@ class MatFile5Reader(MatFileReader):
                         pr = self._resolve_opaque_ids(opaque_ids)
                         dtype = pr.dtype
                         dims = pr.shape
+
+                    if self._squeeze_me:
+                        for i in pr.flat:
+                            # Squeeze every field of a Numpy structured array.
+                            for field_name in i.dtype.names:
+                                i[field_name] = squeeze_element(i[field_name])
+
                 else:
                     pr = next(reader)
                     dtype = (pr.dtype if not self._mat_dtype else
